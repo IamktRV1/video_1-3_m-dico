@@ -13,48 +13,71 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
         }
         video {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+        .iphone-warning {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <video id="meuVideo" src="bemvindo2.mp4" controls autoplay></video>
+    <div id="iphoneWarning" class="iphone-warning">
+        Para uma melhor experiência, gire o dispositivo para a horizontal e toque em tela cheia.
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const video = document.getElementById('meuVideo');
+            const iphoneWarning = document.getElementById('iphoneWarning');
 
-            // Tentar colocar o vídeo em tela cheia automaticamente
-            function entrarEmTelaCheia() {
-                if (video.requestFullscreen) {
-                    video.requestFullscreen();
-                } else if (video.mozRequestFullScreen) { // Firefox
-                    video.mozRequestFullScreen();
-                } else if (video.webkitRequestFullscreen) { // Chrome e Safari
-                    video.webkitRequestFullscreen();
-                } else if (video.msRequestFullscreen) { // IE/Edge
-                    video.msRequestFullscreen();
+            // Detectar se é um dispositivo iOS
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+            if (isIOS) {
+                iphoneWarning.style.display = 'block';
+            } else {
+                // Tentar entrar em tela cheia e forçar orientação horizontal para Android e outros dispositivos
+                function entrarEmTelaCheia() {
+                    if (video.requestFullscreen) {
+                        video.requestFullscreen();
+                    } else if (video.mozRequestFullScreen) { // Firefox
+                        video.mozRequestFullScreen();
+                    } else if (video.webkitRequestFullscreen) { // Chrome e Safari
+                        video.webkitRequestFullscreen();
+                    } else if (video.msRequestFullscreen) { // IE/Edge
+                        video.msRequestFullscreen();
+                    }
                 }
-            }
 
-            // Forçar orientação horizontal
-            function forcarOrientacaoHorizontal() {
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(function (err) {
-                        console.warn('Falha ao mudar orientação:', err);
-                    });
+                function forcarOrientacaoHorizontal() {
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(function (err) {
+                            console.warn('Falha ao mudar orientação:', err);
+                        });
+                    }
                 }
-            }
 
-            // Quando o vídeo começar a tocar, forçar tela cheia e orientação horizontal
-            video.addEventListener('play', function () {
-                entrarEmTelaCheia();
-                forcarOrientacaoHorizontal();
-            });
+                video.addEventListener('play', function () {
+                    entrarEmTelaCheia();
+                    forcarOrientacaoHorizontal();
+                });
+            }
         });
     </script>
 </body>
