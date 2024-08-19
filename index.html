@@ -1,18 +1,18 @@
-indo<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vídeo em Tela Cheia</title>
+    <title>Vídeo em Tela Cheia e Horizontal</title>
     <style>
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
+            background-color: #000;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #000;
         }
         video {
             width: 100%;
@@ -22,6 +22,40 @@ indo<!DOCTYPE html>
     </style>
 </head>
 <body>
-    <video src="bemvindo.mp4" controls autoplay></video>
+    <video id="meuVideo" src="bemvindo2.mp4" controls autoplay></video>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const video = document.getElementById('meuVideo');
+
+            // Tentar colocar o vídeo em tela cheia automaticamente
+            function entrarEmTelaCheia() {
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.mozRequestFullScreen) { // Firefox
+                    video.mozRequestFullScreen();
+                } else if (video.webkitRequestFullscreen) { // Chrome e Safari
+                    video.webkitRequestFullscreen();
+                } else if (video.msRequestFullscreen) { // IE/Edge
+                    video.msRequestFullscreen();
+                }
+            }
+
+            // Forçar orientação horizontal
+            function forcarOrientacaoHorizontal() {
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(function (err) {
+                        console.warn('Falha ao mudar orientação:', err);
+                    });
+                }
+            }
+
+            // Quando o vídeo começar a tocar, forçar tela cheia e orientação horizontal
+            video.addEventListener('play', function () {
+                entrarEmTelaCheia();
+                forcarOrientacaoHorizontal();
+            });
+        });
+    </script>
 </body>
 </html>
